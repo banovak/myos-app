@@ -1,0 +1,113 @@
+{
+  "expo": {
+    "name": "My OS",
+    "slug": "assistant-face",
+    "version": "2.1.0",
+    "scheme": "mypa",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F5F0E8",
+    "splash": {
+      "backgroundColor": "#F5F0E8"
+    },
+    "ios": {
+      "bundleIdentifier": "com.yourname.myos",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "The assistant listens through your microphone during voice conversations — on your runs, walks, and at your desk.",
+        "UIBackgroundModes": [
+          "audio"
+        ],
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Takes photos for your health record. Each one is encrypted on this phone before it is stored in your own account.",
+        "NSPhotoLibraryUsageDescription": "Lets you attach photos from your library. Health photos are encrypted on this phone before they are stored in your own account.",
+        "NSHealthShareUsageDescription": "Reads daily sleep, heart, steps, weight and cycle data so they can be kept in your own health record. Nothing is written back to Health.",
+        "NSHealthUpdateUsageDescription": "My OS never writes to Apple Health. This permission is listed only because the Health library can write; the app does not ask for it."
+      },
+      "bitcode": false
+    },
+    "android": {
+      "package": "com.yourname.myos",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
+      ],
+      "backgroundColor": "#F5F0E8",
+      "adaptiveIcon": {
+        "backgroundColor": "#F5F0E8",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "./plugins/withoutPush.js",
+      "@livekit/react-native-expo-plugin",
+      "@config-plugins/react-native-webrtc",
+      [
+        "expo-share-intent",
+        {
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsText": true,
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
+            "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
+            "NSExtensionActivationSupportsImageWithMaxCount": 10,
+            "NSExtensionActivationSupportsMovieWithMaxCount": 10
+          },
+          "androidIntentFilters": [
+            "text/*",
+            "image/*",
+            "video/*"
+          ],
+          "androidMultiIntentFilters": [
+            "image/*",
+            "video/*"
+          ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Lets you attach photos and videos from your library: to send a task to your assistant, or to add to your health record (encrypted on this phone first)."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Takes photos for your health record. Each one is encrypted on this phone before it is stored in your own account."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#8B0000",
+          "defaultChannel": "health-reminders"
+        }
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-sharing",
+      "expo-background-task",
+      "react-native-quick-crypto",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "Reads daily sleep, heart, steps, weight and cycle data so they can be kept in your own health record. Nothing is written back to Health.",
+          "NSHealthUpdateUsageDescription": "My OS never writes to Apple Health. This permission is listed only because the Health library can write; the app does not ask for it.",
+          "background": false
+        }
+      ],
+      "expo-secure-store"
+    ]
+  }
+}
