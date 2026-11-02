@@ -248,7 +248,7 @@ export function createSupabaseStore(cfg: { supabaseUrl: string; supabaseKey: str
     async mfaEnroll() {
       const { data: all, error: e0 } = await sb.auth.mfa.listFactors(); if (e0) throw e0;
       for (const f of all.all.filter((f) => f.status !== "verified")) await sb.auth.mfa.unenroll({ factorId: f.id });
-      const { data, error } = await sb.auth.mfa.enroll({ factorType: "totp", friendlyName: "My OS Health" });
+      const { data, error } = await sb.auth.mfa.enroll({ factorType: "totp", friendlyName: "My OS Health", issuer: "My OS Health" });
       if (error) throw error;
       return data as any;
     },

@@ -1,7 +1,7 @@
 // Security (two-step sign-in, the photo vault), the accent colour, vault
 // setup and unlock, two-step enrolment.
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useHealth, type Health } from "../state/HealthContext";
 import type { SupabaseStore } from "../store/supabase";
@@ -97,7 +97,7 @@ function MfaSetup() {
   const h = useHealth();
   const t = useT();
   const store = h.store as SupabaseStore;
-  const [d, setD] = useState<{ id: string; totp: { qr_code: string; secret: string } } | null>(null);
+  const [d, setD] = useState<{ id: string; totp: { qr_code: string; secret: string; uri: string } } | null>(null);
   const [code, setCode] = useState(""); const [err, setErr] = useState("");
   useEffect(() => { store.mfaEnroll().then(setD).catch((e) => setErr(e?.message || String(e))); }, []);
   return (
@@ -106,11 +106,14 @@ function MfaSetup() {
       {!d && !err ? <P>Preparing…</P> : null}
       {d ? (
         <>
-          <P>Scan this with an authenticator app (1Password, Google Authenticator, Authy), then enter the 6-digit code it shows.</P>
+          <P>1. Add this code to an authenticator app. On this phone, tap the button and choose your app. From another device, scan the code.</P>
+          <P>Google Authenticator, Microsoft Authenticator or Authy: they add it straight away. 1Password: open your My OS Health login and add a one-time password. iPhone Passwords: save a login for My OS Health first, then add the code to that login.</P>
+          <Btn kind="ghost" label="Add to an authenticator on this phone" onPress={() => Linking.openURL(d.totp.uri).catch(() => setErr("No authenticator app took the code. Install one, or enter the key below by hand."))} />
           <View style={{ flexDirection: "row", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
             <Image source={{ uri: d.totp.qr_code }} style={{ width: 180, height: 180, backgroundColor: "#fff", borderRadius: 12 }} contentFit="contain" />
             <View style={{ flex: 1, minWidth: 160 }}><Text style={{ fontSize: 12, color: t.muted, fontFamily: t.fontUI }}>Can't scan? Enter this key instead:</Text><Text selectable style={{ fontFamily: t.fontData, color: t.ink, fontSize: 12 }}>{d.totp.secret}</Text></View>
           </View>
+          <P>2. Enter the 6-digit code it now shows for My OS Health.</P>
           <Field label="6-digit code"><Input value={code} onChange={setCode} keyboard="number-pad" maxLength={6} autoComplete="one-time-code" textContentType="oneTimeCode" /></Field>
           <Acts right={<Btn kind="accent" label="Turn on" onPress={async () => { try { await store.mfaVerify(d.id, code.trim()); openSecuritySheet(h); } catch (e: any) { setErr(e?.message || String(e)); } }} />} />
         </>
