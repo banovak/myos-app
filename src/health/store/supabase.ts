@@ -188,7 +188,8 @@ export function createSupabaseStore(cfg: { supabaseUrl: string; supabaseKey: str
       for (const t of ORDER) {
         const changed = rows[t].filter((r: any) => old[t].get(keyOf(t, r)) !== JSON.stringify(r)).map((r: any) => ({ ...r, owner: uid }));
         if (!changed.length) continue;
-        const { error } = await T(t).upsert(changed, CONFLICT[t] ? { onConflict: CONFLICT[t] } : undefined);
+        // a key some rows leave out (an illness's episodes, a restarted regimen's periods) takes the column default, not null
+        const { error } = await T(t).upsert(changed, { ...(CONFLICT[t] ? { onConflict: CONFLICT[t] } : {}), defaultToNull: false });
         if (error) throw error;
       }
       for (const t of [...ORDER].reverse()) {
