@@ -1,5 +1,7 @@
 // First-launch pairing — clean and modern: the orb mark, a title, two fields, a
-// pill button. Tapping anywhere outside the fields dismisses the keyboard.
+// pill button. Tapping anywhere outside the fields dismisses the keyboard. The
+// Assistant is the default module, so this is also the first screen for someone
+// who only wants Health: the link under the form takes them to Add features.
 import { useState } from "react";
 import {
   Keyboard,
@@ -11,6 +13,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useShell } from "../shell/ShellContext";
 import { theme } from "../theme";
 import { normalizeGatewayUrl, savePairing, type Pairing } from "./storage";
 
@@ -19,6 +22,7 @@ export function PairScreen(props: { onPaired: (p: Pairing) => void }) {
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const shell = useShell();
 
   async function pair() {
     setError(null);
@@ -91,7 +95,9 @@ export function PairScreen(props: { onPaired: (p: Pairing) => void }) {
           {error ? <Text style={styles.error}>{error}</Text> : null}
         </View>
 
-        <View />
+        <Pressable onPress={shell.openAddFeatures} hitSlop={12} accessibilityRole="button">
+          <Text style={styles.alt}>Here for Health? Add it instead</Text>
+        </Pressable>
       </KeyboardAvoidingView>
     </Pressable>
   );
@@ -152,4 +158,5 @@ const styles = StyleSheet.create({
   btnBusy: { opacity: 0.6 },
   btnText: { color: theme.bg, fontSize: 16, fontWeight: "700" },
   error: { color: theme.red, fontSize: 14, textAlign: "center", marginTop: 6 },
+  alt: { color: theme.inkSoft, fontSize: 15, textAlign: "center", textDecorationLine: "underline" },
 });
